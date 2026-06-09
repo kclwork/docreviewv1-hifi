@@ -41,7 +41,7 @@ Users see a teaser of document issues but must provide their email to unlock the
 - **Phase 5** ✅ — Processing State — complete and approved
 - **Phase 6** ✅ — Partial Results + Email Gate — complete and approved
 - **Phase 7** ✅ — Full Reveal — complete and approved
-- **Phase 8** — GitHub + Vercel Deployment (**DEFERRED** — do not start until explicitly instructed) ← **NEXT**
+- **Phase 8** ✅ — GitHub + Vercel Deployment — complete
 
 ## Phase 2 — What Was Built
 All homepage sections in order:
@@ -143,5 +143,165 @@ All homepage sections in order:
 - 16px margin-top added between subcopy and button
 - Phase 6 widget also updated this session: blurred cards expanded from 1 to 5, two-column layout restructured with proper nested containers (outer columns flush, inner white cards for content), email gate repositioned to be pinned to bottom of right column with upward box shadow, column corners rounded (12px), bottom padding added to widget section (64px matching top), email gate headline changed to ABC Otto H6
 
+## Post-Launch Tweaks (Session — 2026-06-05)
+
+### Pricing Section (all funnel pages: marketing landing, upload, processing, partial results, full reveal)
+- Enterprise card removed
+- Remaining 2 cards (Personal & Family, Small Business) centered using `repeat(2, minmax(0, 480px))` + `justify-content: center`
+
+
+
+### Upload Screen (`/upload`)
+- Checkmark icon background changed from `--color-neutral-black` to `--color-action-primary-default` (accent purple)
+- "Review my document" button changed from black to `--color-action-primary-default` (accent purple); hover uses `--color-action-primary-hover`
+
+### Partial Results + Full Reveal (`/partial-results`, `/full-reveal`)
+- `.elleCard` bottom corners flattened: `border-radius` changed from `8px` to `8px 8px 0 0`
+- "Powered by Elle" header divider changed from light purple (`rgba(105, 43, 238, 0.15)`) to `--color-border-default` (standard grey)
+
 ## Current Status
-**Phase 7 complete and approved.** Phase 8 (GitHub + Vercel Deployment) is next — do not start until explicitly instructed.
+**Desktop: all phases complete and pushed.** Repo live at https://github.com/kclwork/docreviewv1-hifi. Deployed to Vercel manually by user.
+
+---
+
+# Mobile V1 — `/mobile-v1` Funnel
+
+A mobile-specific build of the same Elle Summary V1 funnel, added under `/mobile-v1` without touching any existing desktop screens or shared components. Designed at 375px width, fluid above, 28px page margins, 44×44 minimum tap targets, no hover states.
+
+## Mobile Routes
+
+| Screen | Route |
+|--------|-------|
+| Mobile Homepage | `/mobile-v1` |
+| Mobile Marketing Landing | `/mobile-v1/get-a-free-document-review` |
+| Mobile Upload | `/mobile-v1/upload` |
+| Mobile Processing | `/mobile-v1/processing` |
+| Mobile Partial Results + Email Gate | `/mobile-v1/partial-results` |
+| Mobile Full Reveal | `/mobile-v1/full-reveal` |
+
+## Mobile Phase Plan
+- **Phase 1** ✅ — Setup + Mobile Nav + Mobile Menu Overlay + Mobile Homepage
+- **Phase 2** ✅ — Mobile Marketing Landing + Mobile Upload
+- **Phase 3** ✅ — Mobile Processing State
+- **Phase 4** ✅ — Mobile Partial Results + Email Gate
+- **Phase 5** ✅ — Mobile Full Reveal
+- **Phase 6** ⏳ — End-to-End Mobile Flow QA (pending)
+- **Phase 7** ⏳ — GitHub Push & Vercel Deploy of mobile build (pending)
+
+## Mobile Phase 1 — What Was Built
+- `src/components/mobile/MobileNav.jsx` — sticky header (LegalShield logo left, hamburger right, 44×44 tap target)
+- `src/components/mobile/MobileMenuOverlay.jsx` — full-viewport white overlay, X close top right, no logo. Primary items (Personal / Business / Resources / Pricing / Get a free document review [AI]) use Instrument Rounded Paragraph XL (22px / 33px) regular weight, primary text color. Only "Get a free document review [AI]" is clickable → `/mobile-v1/get-a-free-document-review`. Utility items (Sign In / Search / Cart / Call Us) with icons stacked at the bottom.
+- `src/components/mobile/MobileFooter.jsx` — dark footer with newsletter, 4 stacked link columns, country/app/legal rows
+- `src/pages/mobile/MobileHomepage.jsx` at `/mobile-v1` — full mobile homepage in this order:
+  1. Hero — copy first (headline, body, purple Shop plans), horizontal infinite marquee of 6 hero images below
+  2. Stats — 4.5M / 22 yrs / $1/day inline with dividers
+  3. One simple legal solution — family-of-4 image + 4-row FAQ accordion (row 1 interactive)
+  4. Awards — dark green section, ABC Otto headline, Forbes 2x2 grid 2023→2026
+  5. Logo cloud — FEATURED IN eyebrow + 5 grayscale logos
+  6. How we help — single-card carousel with prev/next chevrons below (cards not tappable)
+  7. How it works — 3 stacked steps with images
+  8. Testimonial — italic ABC Otto, cream background
+  9. Pricing — 2 stacked cards (Personal & Family / Small Business)
+  10. FAQ — 4 rows (row 1 interactive) + Help Center button
+  11. Ready to get legal help CTA — warm-200 background
+  12. Mobile footer
+
+### Mobile Phase 1 — Deviations / Corrections
+- Initial hero ordering had marquee first then copy; swapped per user request so headline + body + CTA come first, marquee below
+- Menu overlay initial implementation used ABC Otto 36px; switched to Instrument Rounded Paragraph XL (22px / 33px, regular, primary text) per user request
+
+## Mobile Phase 2 — What Was Built
+- `src/components/mobile/MobileFunnelSections.jsx` — shared mobile sections (`MobileMktHero`, `MobileElleFaq`, `MobileBenefits`, `MobilePricing`) reused across all funnel pages from the marketing landing page onward
+- `src/pages/mobile/MobileMktLandingPage.jsx` at `/mobile-v1/get-a-free-document-review`:
+  - Warm `#F5F4EE` hero with centered "Understand any legal document in minutes" + subtext
+  - Elle widget: eyebrow text "MEET ELLE • YOUR AI LEGAL ASSISTANT" in primary purple uppercase, "Get your document reviewed" ABC Otto headline, body copy, 3 trust signals with purple checkmarks
+  - Dashed-border upload card with purple circle upload icon, purple "+ Upload document" CTA bound to real `<input type="file" accept=".pdf,.doc,.docx,...">`; selecting a file navigates to `/mobile-v1/upload`
+  - Accepted formats + legal disclaimer below dashed zone
+  - FAQ → Benefits → Pricing → footer
+- `src/pages/mobile/MobileUpload.jsx` at `/mobile-v1/upload`:
+  - Same page structure
+  - Confirmed file widget: purple checkmark icon on purple circle, "Service_Contract_2026.doc" semibold, "248 KB" muted, underlined "Change file" link, purple full-width "Review my document" CTA → navigates to `/mobile-v1/processing`
+  - Accepted formats and disclaimer hidden in this state
+
+### Mobile Phase 2 — Deviations / Corrections
+- Eyebrow originally rendered as a pill; changed to plain eyebrow text (all caps, primary purple, paragraph SM medium weight)
+- Pricing section initially used `--color-neutral-warm-200` background; changed to white per user request
+- Pricing cards initially had grey borders + white bg; changed to `#EEF1FF` background, no border
+- Price figures (e.g. $35) initially semibold 40px; changed to Instrument Rounded H3 (48px) medium weight per user request
+
+## Mobile Phase 3 — What Was Built
+- `src/pages/mobile/MobileProcessing.jsx` at `/mobile-v1/processing`:
+  - Same page structure as marketing landing/upload (hero, Elle widget area, FAQ, Benefits, Pricing, footer)
+  - Widget area shows processing state: dashed-border card with CSS spinning loader (purple ring on light-purple track), filename "Service_Contract_2026.doc" semibold, rotating value prop (5 phrases cycling every 1.2s), hint text "Usually ~20 seconds · Don't close this window"
+  - Auto-advances to `/mobile-v1/partial-results` after 6 seconds (matches desktop timing)
+
+## Mobile Phase 4 — What Was Built
+- `src/components/mobile/MobileContractModal.jsx` — full-screen white modal triggered by tapping filename, with filename header + X close button (44×44), scrollable Wedding Photography Services Agreement body (6 sections matching desktop). Closes on X tap or backdrop tap.
+- `src/pages/mobile/MobilePartialResults.jsx` at `/mobile-v1/partial-results`:
+  - Hero + "MEET ELLE - YOUR AI ASSISTANT" eyebrow + "Get your document reviewed" headline above the widget
+  - Widget container: 20px rounded corners on all sides, `overflow: hidden`, 16px internal content padding on top and bottom sections
+  - **Top section (light purple `--color-accent-subtle-bg`):** POWERED BY ELLE eyebrow with shield icon, tappable filename row (opens contract modal), "Elle flagged 8 issues." H5 headline, subtext, Document Summary accordion (0px vertical padding for tight feel), "ISSUE X OF 8" label, single issue card with severity badge + category + title + 3-line clamped description and "Read more" hint
+  - Tap card to expand to full description (locked cards 4–8 not tappable). Issues 1–3 fully readable; issues 4–8 blurred with CSS `filter: blur(4px)`
+  - Pagination: prev/next ghost chevrons (44×44) + 8 dots — active dot purple, dots 4–8 muted opacity to signal locked
+  - **Bottom section (warm cream `--color-neutral-warm-200`):** "Elle found 5 more issues worth reviewing" headline, "Enter your email to unlock the full review." subtext, pill email input with inline arrow submit, inline error for invalid email, fine print
+  - Valid email submission navigates to `/mobile-v1/full-reveal` after 800ms, passing the email via `location.state`
+- Route added to `App.jsx`
+
+### Mobile Phase 4 — Deviations / Corrections
+- Initial widget had no eyebrow/heading above the rounded container; user requested they be added back ("MEET ELLE - YOUR AI ASSISTANT" + "Get your document reviewed")
+- Initial widget structure was a flat two-stacked-sections block; user requested wrapping in a 20px rounded container with `overflow: hidden`
+- Initial widget content padding was 32px / 28px / 40px; reduced to 16px on all sides
+- "Elle flagged 8 issues." headline was 40px ABC Otto; scaled down to H5 (32px / 35.2px / -0.96 letter-spacing)
+- Document Summary accordion padding iterated: 8px → 4px → 0px vertical padding (final)
+
+## Mobile Phase 5 — What Was Built
+- `src/pages/mobile/MobileFullReveal.jsx` at `/mobile-v1/full-reveal`:
+  - Reuses the same hero + eyebrow + "Get your document reviewed" headline + 20px rounded widget container as partial results
+  - **Success banner** placed as the visual header of the widget card itself (first child inside the rounded container, capped by the widget's `overflow: hidden`): soft light green `--color-status-success-subtle` background, filled green circular checkmark icon on left, "Unlocked. Sent full results to **[email]**" text (Instrument Rounded Paragraph XS — 12px / 18px, email bolded). Reads `email` from `location.state` (defaults to `you@example.com` when navigated directly).
+  - **Top section** identical to partial results, but all 8 issue cards are fully accessible — no blur filter on cards 4–8, no muted pagination dots; every card is tappable to expand
+  - **Bottom section** (replaces email gate): warm `--color-surface-warm-default` (= `--color-neutral-warm-200`) background matching the partial-results email gate, "Elle's bottom line" H6 headline, body copy, full-width black pill CTA "Subscribe to speak to a lawyer" → smooth-scrolls to the Pricing section via `useRef` + `scrollIntoView`
+  - Filename row still opens the contract preview modal
+
+### Mobile Phase 5 — Deviations / Corrections
+- Success banner was initially placed above the nav as a full-width page banner; user requested it move inside the widget. Iterated to its final position as the capped header of the widget card (rounded top corners inherited from widget container, square bottom, sits flush with light purple section below)
+- Bottom section background initially white, then `--color-surface-warm-subtle` (warm-100); finalized to `--color-surface-warm-default` (warm-200) to match the email gate
+- Success banner text size iterated: 14px → 10px → 12px (Paragraph XS)
+
+## Mobile — Key Constraints & Rules
+- Design target: 375px screen width, 28px left/right page margins, fluid above 375px (content stretches; margins remain 28px)
+- Minimum 44×44px tap targets on all interactive elements
+- No CSS hover states — touch interface only; use `:active` for press feedback
+- Single column layout throughout
+- All tokens via `design-tokens.css` (no hardcoded colors, type, spacing)
+- ABC Otto for headings and display text only; Instrument Rounded for buttons, labels, UI, stats, pricing figures
+- No desktop pages, routes, or shared components modified
+- All copy pulled from `references/mobile-v1/` annotated screens
+- Mobile nav + menu overlay used on all mobile screens
+- Funnel pages 2–5 share `MobileFunnelSections.jsx` (`MobileMktHero`, `MobileElleFaq`, `MobileBenefits`, `MobilePricing`) and the marketing-landing widget eyebrow/heading CSS
+
+## Mobile — Current File Additions
+```
+src/
+├── App.jsx                                            (updated — adds 6 mobile routes)
+├── components/
+│   └── mobile/
+│       ├── MobileNav.jsx / .module.css
+│       ├── MobileMenuOverlay.jsx / .module.css
+│       ├── MobileFooter.jsx / .module.css
+│       ├── MobileFunnelSections.jsx / .module.css     (shared hero/FAQ/Benefits/Pricing)
+│       └── MobileContractModal.jsx / .module.css      (shared by partial + full reveal)
+└── pages/
+    └── mobile/
+        ├── MobileHomepage.jsx / .module.css
+        ├── MobileMktLandingPage.jsx / .module.css
+        ├── MobileUpload.jsx / .module.css
+        ├── MobileProcessing.jsx / .module.css
+        ├── MobilePartialResults.jsx / .module.css
+        └── MobileFullReveal.jsx / .module.css
+references/
+└── mobile-v1/                                          (Figma reference images + annotations)
+```
+
+## Mobile — What's Left
+- **Phase 6:** End-to-end mobile flow QA — walk the full funnel (`/mobile-v1` → marketing → upload → processing → partial-results → full-reveal) at 375px + larger viewports, confirm contract modal / issue card expand-collapse / accordion / email validation / blurred-card gating / scroll-to-pricing all work, confirm no desktop regressions, audit tap targets and absence of hover styles
+- **Phase 7:** Push to GitHub and confirm Vercel auto-deploy (mobile build will be live at `docreviewv1-hifi.vercel.app/mobile-v1`)

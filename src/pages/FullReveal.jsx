@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import Nav from '../components/Nav.jsx'
 import Footer from '../components/Footer.jsx'
 import Accordion from '../components/Accordion.jsx'
@@ -96,6 +97,45 @@ const BENEFITS_FAQ = [
 
 export default function FullReveal() {
   const pricingRef = useRef(null)
+  const location = useLocation()
+  const email = location.state?.email || 'you@example.com'
+
+  const elleBodyRef = useRef(null)
+  const issueRefs = useRef([])
+  const [revealed, setRevealed] = useState(() => new Set())
+
+  useEffect(() => {
+    const root = elleBodyRef.current
+    if (!root) return
+
+    root.scrollTop = 0
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setRevealed((prev) => {
+          const next = new Set(prev)
+          let changed = false
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const idx = Number(entry.target.dataset.idx)
+              if (!next.has(idx)) {
+                next.add(idx)
+                changed = true
+              }
+            }
+          })
+          return changed ? next : prev
+        })
+      },
+      { root, threshold: 0.4 }
+    )
+
+    issueRefs.current.forEach((el) => {
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   function scrollToPricing() {
     pricingRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -170,6 +210,18 @@ export default function FullReveal() {
               {/* Right column — Elle output, all issues unlocked */}
               <div className={styles.elleCol}>
 
+                {/* Success banner — connected header above white card */}
+                <div className={styles.successBanner} role="status">
+                  <span className={styles.successIcon} aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M3.5 8.5l3 3 6-6.5" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
+                  <span className={styles.successText}>
+                    Unlocked. Sent full results to <strong>{email}</strong>
+                  </span>
+                </div>
+
                 {/* Scrollable inner content card */}
                 <div className={styles.elleCard}>
                   <div className={styles.elleHeader}>
@@ -179,7 +231,7 @@ export default function FullReveal() {
                     <span className={styles.ellePoweredBy}>Powered by Elle</span>
                   </div>
 
-                  <div className={styles.elleBody}>
+                  <div className={styles.elleBody} ref={elleBodyRef}>
                     <div className={styles.elleSection}>
                       <span className={styles.elleSectionLabel}>Document Summary</span>
                       <p className={styles.elleSummary}>
@@ -192,17 +244,25 @@ export default function FullReveal() {
                       <span className={styles.issuesBadge}>8</span>
                     </div>
 
-                    {ALL_ISSUES.map((issue, i) => (
-                      <div key={i} className={styles.issueCard}>
-                        <div className={styles.issueTop}>
-                          <span className={styles.issueHeadline}>{issue.headline}</span>
-                          <span className={`${styles.issueTag} ${styles[`issueTag--${issue.tagVariant}`]}`}>
-                            {issue.tag}
-                          </span>
+                    {ALL_ISSUES.map((issue, i) => {
+                      const isBlurred = i >= 3 && !revealed.has(i)
+                      return (
+                        <div
+                          key={i}
+                          ref={(el) => { if (i >= 3) issueRefs.current[i] = el }}
+                          data-idx={i}
+                          className={`${styles.issueCard} ${isBlurred ? styles.issueCardBlurred : ''}`}
+                        >
+                          <div className={styles.issueTop}>
+                            <span className={styles.issueHeadline}>{issue.headline}</span>
+                            <span className={`${styles.issueTag} ${styles[`issueTag--${issue.tagVariant}`]}`}>
+                              {issue.tag}
+                            </span>
+                          </div>
+                          <p className={styles.issueSubcopy}>{issue.subcopy}</p>
                         </div>
-                        <p className={styles.issueSubcopy}>{issue.subcopy}</p>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
 

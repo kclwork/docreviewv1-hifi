@@ -110,7 +110,7 @@ export default function PartialResults() {
       return
     }
     setStatus('success')
-    setTimeout(() => navigate('/full-reveal'), 800)
+    setTimeout(() => navigate('/full-reveal', { state: { email } }), 800)
   }
 
   return (
